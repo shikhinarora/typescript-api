@@ -2,20 +2,30 @@ const User = require('../models/user');
 
 const { body, validationResult } = require('express-validator');
 
+let users = [];
 
 const createUser = async (req, res, next) => {
   try {
     const errors = validationResult(req);
 
-    console.log('errors :', errors);
-
     if (!errors.isEmpty()) {
+      // TODO: reformat errors
       res.status(422).json({ errors: errors.array() });
       return;
     }
 
-    // const { username, password, firstName, lastName, mobile, isActive } = req.body
-    
+    const reqUsers = req.body;
+    users = [];
+
+    reqUsers.forEach(user => {
+      // TODO: check for duplicate users
+      const { username, password, firstName, lastName, mobile, isActive } = user;  
+      const u = new User(username, password, firstName, lastName, mobile, isActive);
+      users.push(u);
+    });
+
+    console.log('users :', users);
+
     // const user = await User.create({
     //   username,
     //   password,
@@ -26,27 +36,62 @@ const createUser = async (req, res, next) => {
     // })
 
     // res.json(user)
-    res.json({
-      message: "Success!"
-    })
+    res.status(200).json({ message: "Users uploaded successfully" });
   } catch(err) {
-    return next(err)
+    return next(err);
+  }
+};
+
+const login = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(422).json({ errors: errors.array() });
+      return;
+    }
+
+    const { username, password } = req.body;
+
+    const user = users.filter((user) => {
+      return user.isActive && user.username === username && user.password === password;
+    });
+
+    console.log('user :', user);
+
+    if (user.length > 0) {
+      res.status(200).json({ message: "Logged in  successfully" });
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (err) {
+    return next(err);;
   }
 };
 
 const validateUser = () => {
   return [ 
+    body().isArray(),
+    body('*.username', 'username doesn\'t exists').exists().isEmail(),
+    body('*.password', 'password doesn\'t exists').exists(),
+    body('*.firstName', 'firstName doesn\'t exists').exists(),
+    body('*.lastName', 'lastName doesn\'t exists').exists(),
+    body('*.mobile').exists().isInt(),
+    body('*.isActive').exists().isBoolean(),
+  ]
+};
+
+const validateLogin = () => {
+  return [ 
     body('username', 'username doesn\'t exists').exists().isEmail(),
     body('password', 'password doesn\'t exists').exists(),
-    body('firstName', 'firstName doesn\'t exists').exists(),
-    body('lastName', 'lastName doesn\'t exists').exists(),
-    body('mobile').exists().isInt(),
-    body('isActive').exists().isBoolean(),
   ]
 };
 
 module.exports = {
   validateUser,
-  createUser
+  validateLogin,
+  createUser,
+  login
 };
 

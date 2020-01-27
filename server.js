@@ -16,4 +16,10 @@ router.post(
   userController.createUser,
 );
 
+router.post(
+  '/login',
+  userController.validateLogin(),
+  userController.login,
+);
+
 app.listen(3000);

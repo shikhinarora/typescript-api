@@ -6,15 +6,14 @@ class User {
     lastName,
     mobile,
     isActive,
-  ) {};
-
-  validate() {
-
-  }
-
-  create() {
-
-  }
+  ) {
+    this.username = username;
+    this.password = password;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.mobile = mobile;
+    this.isActive = isActive;
+  };
 };
 
 module.exports = User
