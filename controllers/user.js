@@ -27,7 +27,12 @@ const createUser = async (req, res, next) => {
 
     console.log('users list :', users);
 
-    await insertIntoS3(users);
+    const formattedUsers = users.map((user) => ({
+      userName: user.username,
+      isActive: user.isActive
+    }));
+
+    await insertIntoS3(formattedUsers);
 
     res.status(200).json({ message: "Users uploaded successfully" });
   } catch(err) {
