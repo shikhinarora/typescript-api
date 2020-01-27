@@ -60,6 +60,7 @@ const login = async (req, res, next) => {
       res.status(404).json({ message: "Incorrect credentials" });
     }
   } catch (err) {
+    console.log('login: err:', err);
     return next(err);;
   }
 };

@@ -1,13 +1,17 @@
 const AWS = require('aws-sdk');
 
 // Currently keeping bucket settings static. Can pick from environment if required
+const REGION = 'ap-southeast-1';
 const BUCKET_NAME = `${REGION}-user-bucket`;
 const FILE_NAME = 'userData.json';
-const REGION = 'ap-southeast-1';
 
-const s3 = new AWS.S3({
-  region: REGION
-});
+// Uncomment below code for using inline aws credentials
+// AWS.config.update({
+//   accessKeyId: '<your access key>',
+//   secretAccessKey: 'your secret key'
+// });
+
+const s3 = new AWS.S3();
 
 const insertIntoS3 = async users => {
   // List buckets
