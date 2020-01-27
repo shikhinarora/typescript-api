@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const { insertIntoS3 } = require('../helpers/aws');
 
 const { body, validationResult } = require('express-validator');
 
@@ -24,20 +25,13 @@ const createUser = async (req, res, next) => {
       users.push(u);
     });
 
-    console.log('users :', users);
+    console.log('users list :', users);
 
-    // const user = await User.create({
-    //   username,
-    //   password,
-    //   firstName,
-    //   lastName,
-    //   mobile,
-    //   isActive
-    // })
+    await insertIntoS3(users);
 
-    // res.json(user)
     res.status(200).json({ message: "Users uploaded successfully" });
   } catch(err) {
+    console.log('createUser: err:', err);
     return next(err);
   }
 };
@@ -47,6 +41,7 @@ const login = async (req, res, next) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
+      // TODO: reformat errors
       res.status(422).json({ errors: errors.array() });
       return;
     }
@@ -60,9 +55,9 @@ const login = async (req, res, next) => {
     console.log('user :', user);
 
     if (user.length > 0) {
-      res.status(200).json({ message: "Logged in  successfully" });
+      res.status(200).json({ message: "Logged in successfully" });
     } else {
-      res.status(404).json({ message: "User not found" });
+      res.status(404).json({ message: "Incorrect credentials" });
     }
   } catch (err) {
     return next(err);;

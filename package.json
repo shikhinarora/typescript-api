@@ -6,15 +6,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "nodemon": "^2.0.2",
     "typescript": "^3.7.5"
   },
   "dependencies": {
+    "aws-sdk": "^2.610.0",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "express-validator": "^6.3.1"
